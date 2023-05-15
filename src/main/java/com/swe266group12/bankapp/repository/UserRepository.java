@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UserRepository extends CrudRepository<BankUser, Long> {
     List<BankUser> findByUsername(String username);
+
+    List<BankUser> findByUsernameAndPassword(String username, String password);
 }
