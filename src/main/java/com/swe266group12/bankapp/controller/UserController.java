@@ -28,13 +28,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public RedirectView register(@ModelAttribute("user") BankUser user, RedirectAttributes redirectAttributes) {
+    public RedirectView register(@ModelAttribute("user") BankUser user, RedirectAttributes redirectAttributes,
+                                 HttpSession session) {
+        if (!user.getUsername().matches("[_\\-.0-9a-z]{1,127}") ||
+                !user.getPassword().matches("[_\\-.0-9a-z]{1,127}")) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return new RedirectView("/register");
+        }
         if (!this.userRepository.findByUsername(user.getUsername()).isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Username already exists!");
             return new RedirectView("/register");
         }
         userRepository.save(user);
-        return new RedirectView("/register");
+        session.setAttribute("user", user);
+        return new RedirectView("/home");
     }
 
     @GetMapping("/login")
@@ -51,8 +58,13 @@ public class UserController {
             return new RedirectView("/login");
         }
         session.setAttribute("user", result.get(0));
-        redirectAttributes.addFlashAttribute("user", user);
         return new RedirectView("/home");
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute("user");
+        return "redirect:/welcome";
     }
 
     @PostMapping("/deposit")

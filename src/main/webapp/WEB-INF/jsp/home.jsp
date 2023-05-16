@@ -7,8 +7,14 @@
 </head>
 <body>
 <div class="container" style="width: fit-content; margin-top: 12rem;">
-    <h1>Welcome to Your Account Home</h1>
+    <div>
+        <h1>
+            Welcome to Your Account Home &emsp;&emsp;&emsp;&emsp;&emsp;
+            <a href="/logout" class="btn btn-secondary">Logout</a>
+        </h1>
+    </div>
     <br>
+
     <% if (request.getAttribute("error") != null) { %>
     <div class="alert alert-danger">Error: ${error}</div>
     <% } %>
