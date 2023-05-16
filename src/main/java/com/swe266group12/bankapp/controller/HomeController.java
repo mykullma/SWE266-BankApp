@@ -15,7 +15,8 @@ public class HomeController {
     @GetMapping("/home")
     public String home(Model model) {
         BankUser user = userRepository.findByUsername("kelly").get(0);
-        model.addAttribute("balance", user.getBalance());
+        model.addAttribute("user", user);
+        model.addAttribute("amount", 10);
         return "home";
     }
 }

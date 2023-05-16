@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -13,8 +14,8 @@
         <div class="card" style="width: 18rem; margin: 1rem;">
             <div class="card-body">
                 <h5 class="card-title">Your Balance</h5>
-                <p class="card-text">$${balance}</p>
-                <a href="/login" class="btn btn-secondary">Refresh</a>
+                <p class="card-text">$${user.getBalance()}</p>
+                <a href="/home" class="btn btn-secondary">Refresh</a>
             </div>
         </div>
 
@@ -22,7 +23,9 @@
             <div class="card-body">
                 <h5 class="card-title">Withdraw</h5>
                 <p class="card-text">Withdraw your money here.</p>
-                <a href="/register" class="btn btn-primary">Submit</a>
+                <form:form action="/deposit" method="post" modelAttribute="amount">
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                </form:form>
             </div>
         </div>
     </div>
