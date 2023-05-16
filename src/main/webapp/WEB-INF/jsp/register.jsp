@@ -16,7 +16,7 @@
             <form:form action="/register" method="post" modelAttribute="user">
                 <div style="margin-bottom: 10px;"><form:label cssStyle="margin-bottom: 10px;" path="username">Username: </form:label> <form:input class="form-control" type="text" path="username"/></div>
                 <div style="margin-bottom: 10px;"><form:label cssStyle="margin-bottom: 10px;" path="password">Password: </form:label> <form:input class="form-control" type="text" path="password"/></div>
-                <div><form:label cssStyle="margin-bottom: 10px;" path="balance">Balance: </form:label> <form:input class="form-control" type="number" path="balance"/></div>
+                <div><form:label cssStyle="margin-bottom: 10px;" path="balance">Balance: </form:label> <form:input class="form-control" type="text" path="balance"/></div>
                 <br>
                 <div><input class="btn btn-success" style="width: 19rem;" type="submit" value="Register"/></div>
             </form:form>

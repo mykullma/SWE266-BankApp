@@ -33,7 +33,7 @@
                 <h5 class="card-title">Withdraw</h5>
                 <p class="card-text" style="margin-top: 13px;">Enter the amount:</p>
                 <form:form action="/deposit" method="post" modelAttribute="deposit">
-                    <div style="margin-bottom: 20px;"><form:input class="form-control" type="number" path="withdraw"/></div>
+                    <div style="margin-bottom: 20px;"><form:input class="form-control" type="text" path="withdraw"/></div>
                     <input type="submit" class="btn btn-primary" value="Submit">
                 </form:form>
             </div>
@@ -44,7 +44,7 @@
                 <h5 class="card-title">Deposit</h5>
                 <p class="card-text" style="margin-top: 13px;">Enter the amount:</p>
                 <form:form action="/deposit" method="post" modelAttribute="deposit">
-                    <div style="margin-bottom: 20px;"><form:input class="form-control" type="number" path="deposit"/></div>
+                    <div style="margin-bottom: 20px;"><form:input class="form-control" type="text" path="deposit"/></div>
                     <input type="submit" class="btn btn-primary" value="Submit">
                 </form:form>
             </div>

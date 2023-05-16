@@ -2,9 +2,11 @@ package com.swe266group12.bankapp.controller;
 
 import com.swe266group12.bankapp.model.BankUser;
 import com.swe266group12.bankapp.model.Deposit;
+import com.swe266group12.bankapp.model.User;
 import com.swe266group12.bankapp.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +23,20 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("user", new BankUser());
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping("/register")
-    public RedirectView register(@ModelAttribute("user") BankUser user, RedirectAttributes redirectAttributes,
+    public RedirectView register(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                                  HttpSession session) {
-        if (!user.getUsername().matches("[_\\-.0-9a-z]{1,127}") ||
-                !user.getPassword().matches("[_\\-.0-9a-z]{1,127}")) {
+        if (!user.getUsername().matches("[_\\-\\.0-9a-z]{1,127}") ||
+                !user.getPassword().matches("[_\\-.0-9a-z]{1,127}") ||
+                !isValidNumber(user.getBalance())) {
             redirectAttributes.addFlashAttribute("error", "invalid_input");
             return new RedirectView("/register");
         }
@@ -39,25 +44,28 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Username already exists!");
             return new RedirectView("/register");
         }
-        userRepository.save(user);
+
+        userRepository.save(new BankUser(user.getUsername(), encoder.encode(user.getPassword()), stringToLong(user.getBalance())));
         session.setAttribute("user", user);
         return new RedirectView("/home");
     }
 
     @GetMapping("/login")
     public String loginPage(Model model) {
-        model.addAttribute("user", new BankUser());
+        model.addAttribute("user", new User());
         return "login";
     }
 
     @PostMapping("/login")
-    public RedirectView login(@ModelAttribute("user") BankUser user, RedirectAttributes redirectAttributes, HttpSession session) {
-        List<BankUser> result = this.userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
-        if (result.isEmpty()) {
+    public RedirectView login(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, HttpSession session) {
+        List<BankUser> result = this.userRepository.findByUsername(user.getUsername());
+        if (result.isEmpty() || !encoder.matches(user.getPassword(), result.get(0).getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Login failed!");
             return new RedirectView("/login");
         }
-        session.setAttribute("user", result.get(0));
+
+        user.setBalance(longToString(result.get(0).getBalance()));
+        session.setAttribute("user", user);
         return new RedirectView("/home");
     }
 
@@ -68,14 +76,30 @@ public class UserController {
     }
 
     @PostMapping("/deposit")
-    public RedirectView deposit(@ModelAttribute("deposit") Deposit deposit, RedirectAttributes redirectAttributes, @SessionAttribute("user") BankUser user) {
-        Long balance = user.getBalance() + (deposit.getDeposit() != null ? deposit.getDeposit() : - deposit.getWithdraw());
+    public RedirectView deposit(@ModelAttribute("deposit") Deposit deposit, RedirectAttributes redirectAttributes, @SessionAttribute("user") User user) {
+        Long balance = stringToLong(user.getBalance());
+
+        if (deposit.getDeposit() != null) {
+            if (isValidNumber(deposit.getDeposit())) {
+                balance += stringToLong(deposit.getDeposit());
+            } else {
+                redirectAttributes.addFlashAttribute("error", "invalid_input");
+            }
+        } else if (deposit.getWithdraw() != null) {
+            if (isValidNumber(deposit.getWithdraw())) {
+                balance -= stringToLong(deposit.getWithdraw());
+            } else {
+                redirectAttributes.addFlashAttribute("error", "invalid_input");
+            }
+        }
 
         if (balance < 0) {
             redirectAttributes.addFlashAttribute("error", "Invalid withdrawal!");
         } else {
-            user.setBalance(balance);
-            userRepository.save(user);
+            user.setBalance(longToString(balance));
+            BankUser bankUser = userRepository.findByUsername(user.getUsername()).get(0);
+            bankUser.setBalance(balance);
+            userRepository.save(bankUser);
         }
         return new RedirectView("/home");
     }
@@ -83,5 +107,17 @@ public class UserController {
     public static Connection connect() throws ClassNotFoundException, SQLException {
         Class.forName("org.h2.Driver");
         return DriverManager.getConnection("jdbc:h2:./db", "root","secure_password");
+    }
+
+    public static Long stringToLong(String s) {
+        return Math.round(Double.valueOf(s) * 100);
+    }
+
+    public static String longToString(Long l) {
+        return String.valueOf(l / 100.0);
+    }
+
+    private boolean isValidNumber(String s) {
+        return s.matches("(0|[1-9][0-9]*)\\.([0-9]{2})");
     }
 }

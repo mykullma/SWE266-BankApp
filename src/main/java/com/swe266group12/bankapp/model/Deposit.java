@@ -1,29 +1,29 @@
 package com.swe266group12.bankapp.model;
 
 public class Deposit {
-    private Long deposit;
-    private Long withdraw;
+    private String deposit;
+    private String withdraw;
 
     public Deposit() {}
 
-    public Deposit(Long deposit, Long withdraw) {
+    public Deposit(String deposit, String withdraw) {
         this.deposit = deposit;
         this.withdraw = withdraw;
     }
 
-    public Long getDeposit() {
+    public String getDeposit() {
         return deposit;
     }
 
-    public void setDeposit(Long deposit) {
+    public void setDeposit(String deposit) {
         this.deposit = deposit;
     }
 
-    public Long getWithdraw() {
+    public String getWithdraw() {
         return withdraw;
     }
 
-    public void setWithdraw(Long withdraw) {
+    public void setWithdraw(String withdraw) {
         this.withdraw = withdraw;
     }
 }
