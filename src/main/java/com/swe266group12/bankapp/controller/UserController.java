@@ -31,6 +31,8 @@ public class UserController {
     @PostMapping("/register")
     public RedirectView register(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                                  HttpSession session) {
+        session.setAttribute("user", user);
+
         if (!user.getUsername().matches("[_\\-\\.0-9a-z]{1,127}") ||
                 !user.getPassword().matches("[_\\-.0-9a-z]{1,127}") ||
                 !isValidNumber(user.getBalance())) {
@@ -44,7 +46,6 @@ public class UserController {
         }
 
         userRepository.save(new BankUser(user.getUsername(), encoder.encode(user.getPassword()), stringToLong(user.getBalance())));
-        session.setAttribute("user", user);
         return new RedirectView("/home");
     }
 
