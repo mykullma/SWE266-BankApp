@@ -16,12 +16,13 @@ public class LoginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
 
         if (req.getRequestURI().matches("/home|/profile/.*") && req.getSession().getAttribute("user") == null) {
-            System.out.println("Blocked at " + URI.create(req.getRequestURI()).getPath());
+            System.out.println("Blocked " + URI.create(req.getRequestURI()).getPath());
 
             ((HttpServletResponse) servletResponse).sendRedirect("/");
             return;
         }
 
+        System.out.println("Visited " + URI.create(req.getRequestURI()).getPath());
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }
