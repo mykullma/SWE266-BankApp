@@ -30,7 +30,7 @@ public class HomeController {
 
         model.addAttribute("deposit", new Deposit("", ""));
         model.addAttribute("user", user);
-        model.addAttribute("profile-link", "11");
+        model.addAttribute("profile_link", getImagePath(user.getUsername()));
         model.addAttribute("profile", getImageString(user.getUsername()));
         return "home";
     }
