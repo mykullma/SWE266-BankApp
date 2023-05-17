@@ -1,36 +1,15 @@
-# CWE-73: External Control of File Name or Path in VeraDemo
+# CWE-73: External Control of File Name or Path
 
-VeraDemo uses untrusted data while constructing file paths.
+Bank App uses untrusted data while constructing file paths.
 This leaves the application vulnerable to malicious users uploading
 their own files or exfiltrating files from the system. This may allow
 for code execution or be used as a step to further system compromise.
 
-## Exploit 1 - Stealing files
+## Exploit
 
-1. Go to http://127.0.0.1:8080/profile as a logged in user
-2. Copy the URL of the "Download Profile Image" link
-3. Paste the URL into the browser URL bar
-4. Change the value of the `image` parameter to: ../../WEB-INF/web.xml
-5. Observe that the web.xml configuration file is downloaded
-
-## Exploit 2 - Upload Files
-
-1. Go to http://127.0.0.1:8080/profile as a logged in user
-2. Choose a payload as the profile image (example provided in doc/artifacts)
-3. Change the username to: ../../resources/images/exploit
-4. Navigate to http://127.0.0.1:8080/resources/images/exploit.html
-5. See the script renders successfully
-
-## Mitigate
-
-Canonicalize the file path and check the directory matches the image directory.
-Check the file type to ensure the file served/uploaded is a png file.
-
-## Remediate
-
-Don't use external data as part of the file path. Ideally map a randomly
-generated file name to the user so user-controlled values are never mixed
-with file path information.
+1. Go to http://127.0.0.1:8080/register and register with username of '..'
+2. Go to http://localhost:8080/profile/README.md
+3. Observe that the README.md file is downloaded
 
 ## Resources
 

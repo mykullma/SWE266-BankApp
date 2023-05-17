@@ -1,6 +1,6 @@
-# CWE-601: URL Redirection to Untrusted Site ('Open Redirect') in VeraDemo
+# CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
 
-VeraDemo uses untrusted data while building URL redirects.
+Bank App uses untrusted data while building URL redirects.
 This leaves the application vulnerable to malicious users controlling
 the destination website served when navigating through VeraDemo.
 
@@ -9,17 +9,6 @@ the destination website served when navigating through VeraDemo.
 1. Go to http://127.0.0.1:8080/login?target=http://google.com
 2. Login, if the user is not already
 3. Observe the Google homepage is loaded
-
-## Mitigate
-
-Verify the redirect destination stays within the current application space.
-Use a whitelist to validate the target parameter before returning it.
-
-## Remediate
-
-Don't use untrusted data when constructing URLs for redirection. Instead,
-maintain a whitelist of known URLs/targets and only use external data
-as a selector rather than the redirection value.
 
 ## Resources
 

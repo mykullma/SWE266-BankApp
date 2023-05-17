@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 
 @Controller
@@ -40,6 +37,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "invalid_input");
             return new RedirectView("/register");
         }
+
         if (!this.userRepository.findByUsername(user.getUsername()).isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Username already exists!");
             return new RedirectView("/register");
@@ -51,28 +49,34 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model) {
+    public String loginPage(Model model, @RequestParam(value = "target", required = false) String target,
+                            HttpSession session) {
+        if (session.getAttribute("user") != null) return "redirect:/home";
+
+        if (target == null) target = "/home";
+        session.setAttribute("target", target);
+
         model.addAttribute("user", new User());
         return "login";
     }
 
     @PostMapping("/login")
-    public RedirectView login(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, HttpSession session) {
+    public RedirectView login(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
+                              HttpSession session) {
         List<BankUser> result = this.userRepository.findByUsername(user.getUsername());
         if (result.isEmpty() || !encoder.matches(user.getPassword(), result.get(0).getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Login failed!");
             return new RedirectView("/login");
         }
 
-        user.setBalance(longToString(result.get(0).getBalance()));
         session.setAttribute("user", user);
-        return new RedirectView("/home");
+        return new RedirectView((String) session.getAttribute("target"));
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
-        return "redirect:/welcome";
+        return "redirect:/";
     }
 
     @PostMapping("/deposit")
@@ -104,11 +108,6 @@ public class UserController {
         return new RedirectView("/home");
     }
 
-    public static Connection connect() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:./db", "root","secure_password");
-    }
-
     public static Long stringToLong(String s) {
         return Math.round(Double.valueOf(s) * 100);
     }
@@ -117,7 +116,7 @@ public class UserController {
         return String.valueOf(l / 100.0);
     }
 
-    private boolean isValidNumber(String s) {
+    private static boolean isValidNumber(String s) {
         return s.matches("(0|[1-9][0-9]*)\\.([0-9]{2})");
     }
 }
