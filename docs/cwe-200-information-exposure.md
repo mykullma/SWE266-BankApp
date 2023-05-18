@@ -1,4 +1,4 @@
-# CWE-200: Information Exposure in VeraDemo
+# CWE-200: Information Exposure in BankApp
 
 Bank App has not been properly configured for production use, as such it has
 features that are helpful for debugging but also very helpful for attackers.
