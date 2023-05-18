@@ -10,6 +10,8 @@ import java.net.URI;
 
 @Component
 public class LoginFilter implements Filter {
+
+    // block access to certain path when user is not logged in
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {

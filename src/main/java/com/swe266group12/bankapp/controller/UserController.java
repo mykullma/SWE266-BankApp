@@ -22,12 +22,14 @@ public class UserController {
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
+    // register page
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new User());
         return "register";
     }
 
+    // register handler
     @PostMapping("/register")
     public RedirectView register(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                                  HttpSession session) {
@@ -49,6 +51,7 @@ public class UserController {
         return new RedirectView("/home");
     }
 
+    // login page
     @GetMapping("/login")
     public String loginPage(Model model, @RequestParam(value = "target", required = false) String target,
                             HttpSession session) {
@@ -61,6 +64,7 @@ public class UserController {
         return "login";
     }
 
+    // login handler
     @PostMapping("/login")
     public RedirectView login(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                               HttpSession session) {
@@ -74,12 +78,14 @@ public class UserController {
         return new RedirectView((String) session.getAttribute("target"));
     }
 
+    // logout handler
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
         return "redirect:/";
     }
 
+    // deposit and withdraw handler
     @PostMapping("/deposit")
     public RedirectView deposit(@ModelAttribute("deposit") Deposit deposit, RedirectAttributes redirectAttributes, @SessionAttribute("user") User user) {
         Long balance = stringToLong(user.getBalance());
@@ -109,14 +115,17 @@ public class UserController {
         return new RedirectView("/home");
     }
 
+    // convert between String format used by frontend and Long variable used by backend
     public static Long stringToLong(String s) {
         return Math.round(Double.valueOf(s) * 100);
     }
 
+    // convert between String format used by frontend and Long variable used by backend
     public static String longToString(Long l) {
         return String.valueOf(l / 100.0);
     }
 
+    // helper for number format validation
     private static boolean isValidNumber(String s) {
         return s.matches("(0|[1-9][0-9]*)\\.([0-9]{2})");
     }

@@ -23,6 +23,7 @@ public class HomeController {
     @Autowired
     UserRepository userRepository;
 
+    // home page
     @GetMapping("/home")
     public String home(Model model, @SessionAttribute("user") User user) {
         BankUser bankUser = userRepository.findByUsername(user.getUsername()).get(0);
@@ -35,6 +36,7 @@ public class HomeController {
         return "home";
     }
 
+    // upload profile picture
     @PostMapping("/upload")
     public String handleFileUpload(@RequestParam(value = "file") MultipartFile file, @SessionAttribute("user") User user)
             throws IOException {
@@ -49,6 +51,7 @@ public class HomeController {
         return "redirect:/home";
     }
 
+    // download profile picture
     @GetMapping(value = "/profile/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public @ResponseBody byte[] serveFile(@SessionAttribute("user") User user,
                                           @PathVariable("filename") String filename) throws IOException {
@@ -56,6 +59,7 @@ public class HomeController {
         return IOUtils.toByteArray(in);
     }
 
+    // helper for Base64 encoded image
     public static String getImageString(String username) {
         try {
             File dir = new File("upload/" + username);
@@ -70,6 +74,7 @@ public class HomeController {
         return "";
     }
 
+    // helper for getting profile picture from file system
     public static String getImagePath(String username) {
         try {
             File dir = new File("upload/" + username);

@@ -1,5 +1,6 @@
 package com.swe266group12.bankapp.model;
 
+// user model used by frontend
 public class User {
     private String username;
     private String password;
