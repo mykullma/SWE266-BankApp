@@ -55,6 +55,9 @@ public class HomeController {
     @GetMapping(value = "/profile/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public @ResponseBody byte[] serveFile(@SessionAttribute("user") User user,
                                           @PathVariable("filename") String filename) throws IOException {
+        if (filename.equals("null")) {
+            return new byte[0];
+        }
         InputStream in = new FileInputStream("upload/" + user.getUsername() + "/" +filename);
         return IOUtils.toByteArray(in);
     }
@@ -83,7 +86,8 @@ public class HomeController {
             InputStream image = new FileInputStream(files[0]);
             return files[0].getName();
         } catch (Exception e) {
+            System.out.println(e);
         }
-        return "";
+        return "null";
     }
 }

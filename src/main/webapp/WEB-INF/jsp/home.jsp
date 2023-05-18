@@ -21,7 +21,7 @@
 
     <div class="row">
         <div class="card" style="width: 12rem; margin: 1rem;">
-            <a href="/profile/${profile_link}">
+            <a <% if (!request.getAttribute("profile_link").equals("null")) { %> href="/profile/${profile_link}" <% } %>>
                 <img class="card-img-top" src="data:image/png;base64,${profile}" alt="Profile Image" >
             </a>
             <div class="card-body" style="padding:2px;">
