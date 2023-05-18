@@ -33,7 +33,9 @@ public class UserController {
     @PostMapping("/register")
     public RedirectView register(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                                  HttpSession session) {
+        // START BAD CODE (CWE-501)
         session.setAttribute("user", user);
+        // END BAD CODE
 
         if (!user.getUsername().matches("[_\\-\\.0-9a-z]{1,127}") ||
                 !user.getPassword().matches("[_\\-.0-9a-z]{1,127}") ||
@@ -75,7 +77,9 @@ public class UserController {
         }
 
         session.setAttribute("user", user);
+        // START BAD CODE (CWE-601)
         return new RedirectView((String) session.getAttribute("target"));
+        // END BAD CODE
     }
 
     // logout handler

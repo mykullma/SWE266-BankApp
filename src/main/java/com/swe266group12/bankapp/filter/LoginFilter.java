@@ -24,7 +24,9 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        // START BAD CODE (CWE-117)
         System.out.println("Visited " + URI.create(req.getRequestURI()).getPath());
+        // END BAD CODE
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

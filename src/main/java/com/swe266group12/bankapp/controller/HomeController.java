@@ -58,7 +58,9 @@ public class HomeController {
         if (filename.equals("null")) {
             return new byte[0];
         }
+        // START BAD CODE (CWE-73)
         InputStream in = new FileInputStream("upload/" + user.getUsername() + "/" +filename);
+        // END BAD CODE
         return IOUtils.toByteArray(in);
     }
 
