@@ -33,10 +33,6 @@ public class UserController {
     @PostMapping("/register")
     public RedirectView register(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
                                  HttpSession session) {
-        // START BAD CODE (CWE-501)
-        session.setAttribute("user", user);
-        // END BAD CODE
-
         if (!user.getUsername().matches("[_\\-\\.0-9a-z]{1,127}") ||
                 !user.getPassword().matches("[_\\-.0-9a-z]{1,127}") ||
                 !isValidNumber(user.getBalance())) {
@@ -50,6 +46,11 @@ public class UserController {
         }
 
         userRepository.save(new BankUser(user.getUsername(), encoder.encode(user.getPassword()), stringToLong(user.getBalance())));
+
+        // START BAD CODE (CWE-501)
+        session.setAttribute("user", user);
+        // END BAD CODE
+
         return new RedirectView("/home");
     }
 
@@ -78,7 +79,11 @@ public class UserController {
 
         session.setAttribute("user", user);
         // START BAD CODE (CWE-601)
-        return new RedirectView((String) session.getAttribute("target"));
+        String target = (String) session.getAttribute("target");
+        if (target.toLowerCase().matches("^https?:.*")) {
+            target = "/home";
+        }
+        return new RedirectView(target);
         // END BAD CODE
     }
 
